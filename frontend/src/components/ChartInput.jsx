@@ -52,9 +52,41 @@ export const ChartInput = ({ chartData, chooseProvince, allProvince }) => {
 
   useEffect(() => {
     if (chartData.length === 7 && chooseProvince !== "") {
-      Try();
+      setLabelDates([]);
+      setConfirmedCases([]);
+      setActiveCases([]);
+      setActiveDiff([]);
+      setShowData([]);
+
+      chartData.forEach((element) => {
+        setLabelDates((labelDates) => [...labelDates, element.date]);
+        setConfirmedCases((confirmedCases) => [
+          ...confirmedCases,
+          element.confirmed
+        ]);
+        setActiveCases((activeCases) => [...activeCases, element.active]);
+      });
+
+      if (activeCases && confirmedCases) {
+        setShowData((showdata) => [
+          ...showdata,
+          [
+            {
+              label: "Confirmed cases",
+              data: confirmedCases,
+              borderColor: "rgba(0, 95, 115)"
+            },
+
+            {
+              label: "Active Cases",
+              data: activeCases,
+              borderColor: "rgb(238, 155, 0)"
+            }
+          ]
+        ]);
+      }
     } else if (chooseProvince === "") {
-      const hey = [];
+      const DataProvince = [];
 
       allProvince.forEach((e) => {
         const result = [];
@@ -65,13 +97,44 @@ export const ChartInput = ({ chartData, chooseProvince, allProvince }) => {
         });
 
         if (result.length === 7) {
-          hey.push(result);
+          DataProvince.push(result);
         }
       });
 
-      if (hey.length === 21) {
-        hey.map((eachDataSet) => {
-          eachDataSet.map((item) => {});
+      if (DataProvince.length === 21) {
+        setLabelDates([]);
+        const allData = [];
+        DataProvince.map((eachDataSet) => {
+          const arrayComplete = [];
+          setLabelDates([]);
+          let labelProvince = "";
+          eachDataSet.map((item) => {
+            setLabelDates((labelDates) => [...labelDates, item.date]);
+            arrayComplete.push(item.active);
+            labelProvince = item.region.province;
+          });
+
+          if (arrayComplete.length === 7) {
+            let randomColor = [];
+
+            for (let i = 0; i < 3; i++) {
+              console.log(Math.floor(Math.random() * (256 + 1)));
+              randomColor.push(Math.floor(Math.random() * (256 + 1)));
+            }
+            if (randomColor.length === 3) {
+              allData.push({
+                label: labelProvince,
+                data: arrayComplete,
+                borderColor: `rgba(${randomColor})`
+              });
+            }
+          }
+
+          console.log(allData);
+
+          if (allData.length === 21) {
+            setShowData(allData);
+          }
         });
       }
     }

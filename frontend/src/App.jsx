@@ -7,7 +7,7 @@ import { ChartInput } from "./components/ChartInput";
 import { SelectProvince } from "./components/SelectProvince";
 
 function App() {
-  let now = moment().format("YYYY-MM-DD");
+  let now = moment().subtract(1, "days").format("YYYY-MM-DD");
   const [firstDate, setFirstDate] = useState(now);
   const [date, setdate] = useState();
   const [pickedDates, setPickedDates] = useState([]);
@@ -27,22 +27,19 @@ function App() {
   useEffect(() => {
     const result = [];
 
-    if (now !== firstDate) {
-      setPickedDates([]);
-      for (let i = 0; i <= 6; ++i) {
-        result.push(moment(firstDate).add(i, "days").format("YYYY-MM-DD"));
-      }
+    for (let i = 0; i <= 6; ++i) {
+      result.push(moment(firstDate).add(-i, "days").format("YYYY-MM-DD"));
+    }
 
-      if (result.length === 7) {
-        setPickedDates(result);
-      }
-    } else {
+    if (result.length === 7) {
+      setPickedDates(result);
     }
   }, [firstDate]);
 
-  useEffect(() => {
+  const OnClickGeneratData = () => {
+    setcovidData([]);
+    let getAllData = [];
     if (pickedDates.length === 7 && chooseProvince !== "") {
-      const getAllData = [];
       pickedDates.map((getItem) =>
         fetch(
           `https://covid-19-statistics.p.rapidapi.com/reports?region_province=${chooseProvince}&iso=SWE&date=${getItem}`,
@@ -62,9 +59,7 @@ function App() {
           })
           .catch((err) => console.error(err))
       );
-      setPickedDates([]);
     } else if (pickedDates.length === 7 && chooseProvince === "") {
-      const getAllData = [];
       pickedDates.map((getItem) =>
         fetch(
           `https://covid-19-statistics.p.rapidapi.com/reports?iso=SWE&date=${getItem}`,
@@ -85,7 +80,7 @@ function App() {
           .catch((err) => console.error(err))
       );
     }
-  }, [pickedDates, chooseProvince]);
+  };
 
   return (
     <div className="App">
@@ -100,19 +95,24 @@ function App() {
       <input
         type="date"
         value={firstDate}
+        min="2020-06-14"
+        max={now}
         onChange={(e) => {
           setFirstDate(e.target.value);
         }}
       />
 
-      {covidData &&
-        covidData.map((e) => (
-          <div key={e.date}>
-            <p style={{ color: "white" }}>
-              {!chooseProvince ? e[0].date : e.date}
-            </p>
-          </div>
-        ))}
+      <div>
+        {pickedDates ? (
+          <p style={{ color: "white" }}>
+            {pickedDates[6]} - {pickedDates[0]}
+          </p>
+        ) : (
+          ""
+        )}
+      </div>
+
+      <button onClick={OnClickGeneratData}> Generate data </button>
 
       <ChartInput
         chartData={covidData}
