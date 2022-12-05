@@ -6,7 +6,8 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   plugins: [react(),
     new Dotenv({
-      systemvars: true
+      systemvars: true,
+      prefix: 'import.meta.env.'
   })],
   
 
