@@ -1,10 +1,21 @@
-[[redirects]]
+# Related to YARN_FLAGS https://git.io/fx1W5  https://git.io/fx1RF  # debug with --verbose
+[build]
+  base    = "./services/frontend"
+  command = "echo $YARN_FLAGS && yarn build" 
+  publish = "./services/frontend/build"
+
+[build.environment]
+
+  NPM_FLAGS = "--ignore-optional --frozen-lockfile --network-timeout 1000000 --network-concurrency 1 --verbose"
+
+
+[redirects]
   from = "/*"
   to = "/index.html"
   status = 200
   command = "CI= npm run build"
 
-  [[headers]]
+  [headers]
   for = "/*"
   [headers.values]
     Access-Control-Allow-Origin = "*"
