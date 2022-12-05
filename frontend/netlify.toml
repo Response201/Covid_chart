@@ -1,8 +1,8 @@
-# Related to YARN_FLAGS https://git.io/fx1W5  https://git.io/fx1RF  # debug with --verbose
+
 [build]
-  base    = "./services/frontend"
-  command = "echo $YARN_FLAGS && yarn build" 
-  publish = "./services/frontend/build"
+  base    = "frontend/"
+  command = "echo $NPM_FLAGS && npm build" 
+  publish = "frontend/build"
 
 [build.environment]
 
