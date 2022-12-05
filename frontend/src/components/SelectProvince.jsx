@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-
+import { useEffect } from "react";
+import "../App.css";
 export const SelectProvince = ({
   options,
   chooseProvince,
@@ -22,7 +22,7 @@ export const SelectProvince = ({
   }, []);
 
   return (
-    <div>
+    <div className="selectdiv">
       <select
         value={chooseProvince}
         onChange={(e) => setChooseProvince(e.target.value)}

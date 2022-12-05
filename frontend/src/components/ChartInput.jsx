@@ -1,5 +1,5 @@
 import "chart.js/auto";
-import { enableMapSet } from "immer";
+import "../App.css";
 import React from "react";
 import { useEffect } from "react";
 import { useState } from "react";
@@ -10,55 +10,16 @@ export const ChartInput = ({ chartData, chooseProvince, allProvince }) => {
   const [confirmedCases, setConfirmedCases] = useState([]);
   const [showdata, setShowData] = useState([]);
   const [activeCases, setActiveCases] = useState([]);
-  const [activeDiff, setActiveDiff] = useState([]);
-
-  const Try = () => {
-    if (chartData.length === 7 || array) {
-      setLabelDates([]);
-      setConfirmedCases([]);
-      setActiveCases([]);
-      setActiveDiff([]);
-      setShowData([]);
-
-      chartData.forEach((element) => {
-        setLabelDates((labelDates) => [...labelDates, element.date]);
-        setConfirmedCases((confirmedCases) => [
-          ...confirmedCases,
-          element.confirmed
-        ]);
-        setActiveCases((activeCases) => [...activeCases, element.active]);
-      });
-
-      if (activeCases && confirmedCases) {
-        setShowData((showdata) => [
-          ...showdata,
-          [
-            {
-              label: "Confirmed cases",
-              data: confirmedCases,
-              borderColor: "rgba(0, 95, 115)"
-            },
-
-            {
-              label: "Active Cases",
-              data: activeCases,
-              borderColor: "rgb(238, 155, 0)"
-            }
-          ]
-        ]);
-      }
-    }
-  };
 
   useEffect(() => {
+    /* Om datan avser ett län så tas data ut för aktiva och säkrade covid-fall ut från varje datum och sedan så generaras grafen i nästa "useEffect", rad 85  */
     if (chartData.length === 7 && chooseProvince !== "") {
       setLabelDates([]);
       setConfirmedCases([]);
       setActiveCases([]);
-      setActiveDiff([]);
       setShowData([]);
 
-      chartData.forEach((element) => {
+      chartData.map((element) => {
         setLabelDates((labelDates) => [...labelDates, element.date]);
         setConfirmedCases((confirmedCases) => [
           ...confirmedCases,
@@ -66,28 +27,11 @@ export const ChartInput = ({ chartData, chooseProvince, allProvince }) => {
         ]);
         setActiveCases((activeCases) => [...activeCases, element.active]);
       });
-
-      if (activeCases && confirmedCases) {
-        setShowData((showdata) => [
-          ...showdata,
-          [
-            {
-              label: "Confirmed cases",
-              data: confirmedCases,
-              borderColor: "rgba(0, 95, 115)"
-            },
-
-            {
-              label: "Active Cases",
-              data: activeCases,
-              borderColor: "rgb(238, 155, 0)"
-            }
-          ]
-        ]);
-      }
     } else if (chooseProvince === "") {
-      const DataProvince = [];
+      /* Här berarbetas data om ett län saknas och alla läns säkrade covid-fall skall generaras */
 
+      const DataProvince = [];
+      /* Här soteras varje län ut */
       allProvince.forEach((e) => {
         const result = [];
         chartData.flat().filter((item) => {
@@ -100,7 +44,7 @@ export const ChartInput = ({ chartData, chooseProvince, allProvince }) => {
           DataProvince.push(result);
         }
       });
-
+      /* När all läng(21st) sorterats så tas aktiva covid-fall ut, samt en label för vilket län datan gäller och en unik fär som visas i grafen */
       if (DataProvince.length === 21) {
         setLabelDates([]);
         const allData = [];
@@ -118,7 +62,6 @@ export const ChartInput = ({ chartData, chooseProvince, allProvince }) => {
             let randomColor = [];
 
             for (let i = 0; i < 3; i++) {
-              console.log(Math.floor(Math.random() * (256 + 1)));
               randomColor.push(Math.floor(Math.random() * (256 + 1)));
             }
             if (randomColor.length === 3) {
@@ -130,8 +73,6 @@ export const ChartInput = ({ chartData, chooseProvince, allProvince }) => {
             }
           }
 
-          console.log(allData);
-
           if (allData.length === 21) {
             setShowData(allData);
           }
@@ -140,15 +81,50 @@ export const ChartInput = ({ chartData, chooseProvince, allProvince }) => {
     }
   }, [chartData]);
 
+  /* useEffekt för enskilt län, när all data för valda datum generats  */
+  useEffect(() => {
+    if (activeCases.length === 7 && confirmedCases.length === 7) {
+      setShowData((showdata) => [
+        ...showdata,
+        [
+          {
+            label: "Confirmed cases",
+            data: confirmedCases,
+            borderColor: "rgba(0, 95, 115)"
+          },
+
+          {
+            label: "Active Cases",
+            data: activeCases,
+            borderColor: "rgb(238, 155, 0)"
+          }
+        ]
+      ]);
+    }
+  }, [confirmedCases]);
+
+  var options = {
+    maintainAspectRatio: false,
+    responsive: true,
+    plugins: {
+      legend: {
+        labels: {
+          // This more specific font property overrides the global property
+          font: { size: window.innerWidth > 400 ? 15 : 8 },
+          color: "grey"
+        }
+      }
+    }
+  };
+
   return (
-    <div style={{ backgroundColor: "white" }}>
+    <div className="canvas-container">
       <Line
         data={{
           labels: labelDates,
           datasets: showdata.flat().map((e) => e)
         }}
-        height={400}
-        width={600}
+        options={options}
       />
     </div>
   );

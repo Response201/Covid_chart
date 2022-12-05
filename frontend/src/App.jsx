@@ -14,7 +14,7 @@ function App() {
   const [chooseProvince, setChooseProvince] = useState("");
   const [covidData, setcovidData] = useState([]);
   const [allProvince, setAllProvince] = useState([]);
-  const [url, setUrl] = useState();
+
 
   const options = {
     method: "GET",
@@ -40,6 +40,8 @@ function App() {
     setcovidData([]);
     let getAllData = [];
     if (pickedDates.length === 7 && chooseProvince !== "") {
+     
+
       pickedDates.map((getItem) =>
         fetch(
           `https://covid-19-statistics.p.rapidapi.com/reports?region_province=${chooseProvince}&iso=SWE&date=${getItem}`,
@@ -83,43 +85,54 @@ function App() {
   };
 
   return (
-    <div className="App">
-      <SelectProvince
-        options={options}
-        chooseProvince={chooseProvince}
-        setChooseProvince={setChooseProvince}
-        setAllProvince={setAllProvince}
-        allProvince={allProvince}
-      />
+    <article className="App">
+      <section className="DateAndProvinceInput___container">
+      <div className="DateAndProvinceInput___content"> 
+        <SelectProvince
+          options={options}
+          chooseProvince={chooseProvince}
+          setChooseProvince={setChooseProvince}
+          setAllProvince={setAllProvince}
+          allProvince={allProvince}
+        />
 
-      <input
-        type="date"
-        value={firstDate}
-        min="2020-06-14"
-        max={now}
-        onChange={(e) => {
-          setFirstDate(e.target.value);
-        }}
-      />
+        <input
+          type="date"
+          value={firstDate}
+          min="2020-06-14"
+          max={now}
+          onChange={(e) => {
+            setFirstDate(e.target.value);
+          }}
+        />
 
-      <div>
-        {pickedDates ? (
-          <p style={{ color: "white" }}>
-            {pickedDates[6]} - {pickedDates[0]}
-          </p>
-        ) : (
-          ""
-        )}
+        <div>
+          {pickedDates ? (
+            <p>
+              {pickedDates[6]} - {pickedDates[0]}
+            </p>
+          ) : (
+            ""
+          )}
+        </div>
+
+        <button onClick={OnClickGeneratData}> Generate data </button>
       </div>
+      </section>
 
-      <button onClick={OnClickGeneratData}> Generate data </button>
 
-      <ChartInput
-        chartData={covidData}
-        chooseProvince={chooseProvince}
-        allProvince={allProvince}
-      />
-    </div>
+      {covidData.length >= 7 ? (
+        <section className="chartInput___container">
+          <ChartInput
+            chartData={covidData}
+            chooseProvince={chooseProvince}
+            allProvince={allProvince}
+          />
+        </section>
+      ) : (
+        ""
+      )}
+    </article>
   );
 }
 
