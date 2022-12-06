@@ -109,7 +109,7 @@ export const ChartInput = ({ chartData, chooseProvince, allProvince }) => {
     plugins: {
       legend: {
         labels: {
-          // This more specific font property overrides the global property
+          // ändrar font-size efter skärmens bredd
           font: { size: window.innerWidth > 400 ? 15 : 8 },
           color: "grey"
         }

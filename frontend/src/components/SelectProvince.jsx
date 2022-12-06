@@ -9,7 +9,7 @@ export const SelectProvince = ({
 }) => {
   useEffect(() => {
     fetch(
-      "https://covid-19-statistics.p.rapidapi.com/provinces?iso=SWE",
+      `${import.meta.env.VITE_BASE_URL}/provinces?iso=SWE`,
       options
     )
       .then((response) => response.json())
