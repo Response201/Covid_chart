@@ -2,4 +2,4 @@
 
 https://chart-covid.netlify.app/
 
-- vite-build -
+vite-build 
